@@ -27,6 +27,7 @@ export class KanbanService { // exporta la clase para que pueda ser utilizada en
     return addDoc(this.taskCollection, task);
   }
 
+  // Actualiza el estado de una tarea en Firestore
   updateTaskStatus(taskId: string, newStatus: 'todo' | 'doing' | 'done') {
     const taskDocRef = doc(this.firestore, `tasks/${taskId}`);
     return updateDoc(taskDocRef, { status: newStatus });
