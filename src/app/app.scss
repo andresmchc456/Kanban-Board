@@ -1,0 +1,77 @@
+.kanban-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+
+    .add-task-form {
+        margin-bottom: 20px;
+
+        input {
+            padding: 8px;
+            width: 250px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+    }
+
+    .board {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .column {
+        flex: 1;
+        background: #f4f5f7;
+        border-radius: 6px;
+        padding: 10px;
+        min-width: 250px;
+
+        h2 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+    }
+
+    .task-list {
+        min-height: 200px;
+        background: #f4f5f7;
+        border-radius: 4px;
+        display: block;
+    }
+
+    .task-card {
+        padding: 12px;
+        background: white;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
+}
+
+/* Animaciones nativas de CDK durante el arrastre */
+.cdk-drag-preview {
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+        0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+    opacity: 0.3;
+}
+
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.task-list.cdk-drop-list-receiving .task-card:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
