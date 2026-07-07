@@ -24,6 +24,10 @@ export class AppComponent implements OnInit {
   loading: boolean = true;
   errorMessage: string = '';
 
+  // variables para editar tareas
+  editingTaskId: string | null = null;
+  editingTitle: string = '';
+
   ngOnInit() {
     // Escuchamos los cambios de Firestore en tiempo real
     this.kanbanServices.getTasks().subscribe({
@@ -88,4 +92,31 @@ export class AppComponent implements OnInit {
       console.error('Error al eliminar la tarea: ', error);
     });
   }
+
+  //Cancela la edición y limpia las variables
+  cancelEdit() {
+    this.editingTaskId = null;
+    this.editingTitle = '';
+  }
+
+  //Activa el modo edición cargando el título actual
+  startEdit(task: Task) {
+    if (!task.id) return;
+    this.editingTaskId = task.id;
+    this.editingTitle = task.title;
+  }
+
+  // Guarda los cambios en Firestore y sale del modo edición
+  saveEdit(task: Task) {
+    if (!this.editingTitle.trim() || !task.id) {
+      this.cancelEdit();
+      return;
+    }
+
+    this.kanbanServices.updateTaskTitle(task.id, this.editingTitle).then(() => {
+      this.cancelEdit();
+
+    })
+  }
+
 }
