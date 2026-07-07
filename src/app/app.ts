@@ -22,16 +22,25 @@ export class AppComponent implements OnInit {
 
   newTaskTitle: string = '';
   loading: boolean = true;
+  errorMessage: string = '';
 
   ngOnInit() {
     // Escuchamos los cambios de Firestore en tiempo real
-    this.kanbanServices.getTasks().subscribe(tasks => {
-      this.loading = false;
+    this.kanbanServices.getTasks().subscribe({
+      next: (tasks) => {
+        this.loading = false;
+        this.errorMessage = '';
 
-      // clasificacion de las tareas en sus respectivas columnas 
-      this.todo = tasks.filter(t => t.status == 'todo');
-      this.doing = tasks.filter(t => t.status == 'doing');
-      this.done = tasks.filter(t => t.status == 'done');
+        // clasificacion de las tareas en sus respectivas columnas 
+        this.todo = tasks.filter(t => t.status == 'todo');
+        this.doing = tasks.filter(t => t.status == 'doing');
+        this.done = tasks.filter(t => t.status == 'done');
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = `Error al conectar con Firestore: ${err.message || err}`;
+        console.error('Firestore Error:', err);
+      }
     });
   }
 
