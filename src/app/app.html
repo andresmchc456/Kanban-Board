@@ -12,6 +12,11 @@
     Conectando con Firestore y cargando tareas...
   </div>
 
+  <!-- Mensaje de error de Firestore -->
+  <div *ngIf="errorMessage" class="error-message" style="color: #721c24; margin: 15px 0; font-weight: bold; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; border-radius: 6px;">
+    ⚠️ {{ errorMessage }}
+  </div>
+
 
   <!-- Contenedor del Tablero -->
   <div *ngIf="!loading" class="board" cdkDropListGroup>
