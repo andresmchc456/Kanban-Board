@@ -77,4 +77,15 @@ export class AppComponent implements OnInit {
       }
     }
   }
+
+  //Llamar al servicio para eliminar la tarea
+  removeTask(taskId: string | undefined) {
+    if (!taskId) return;
+
+    this.kanbanServices.deleteTask(taskId).then(() => {
+      console.log('Tarea eliminada correctamente');
+    }).catch(error => {
+      console.error('Error al eliminar la tarea: ', error);
+    });
+  }
 }
