@@ -55,6 +55,7 @@
         justify-content: space-between;
         align-items: center;
 
+
         &:active {
             cursor: grabbing;
         }
@@ -64,41 +65,66 @@
             padding-right: 10px;
         }
 
-        .delete-btn {
-            background: none;
-            border: none;
-            color: #ff5252;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 0 5px;
-            line-height: 1;
-            opacity: 0.5;
-            transition: opacity 0.2s ease;
 
-            &:hover {
-                opacity: 1;
-                transform: scale(1.1);
+        .edit-mode {
+            width: 100%;
+
+            input {
+                width: 100%;
+                padding: 4px;
+                box-sizing: border-box;
+                border: 1px solid #007bff;
+                border-radius: 4px;
+            }
+        }
+
+        .view-mode {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+
+            .task-text {
+                flex: 1;
+                margin-right: 10px;
+            }
+
+            .delete-btn {
+                background: none;
+                border: none;
+                color: #ff5252;
+                font-size: 1.2rem;
+                font-weight: bold;
+                cursor: pointer;
+                padding: 0 5px;
+                line-height: 1;
+                opacity: 0.5;
+                transition: opacity 0.2s ease;
+
+                &:hover {
+                    opacity: 1;
+                    transform: scale(1.1);
+                }
             }
         }
     }
-}
 
-/* Animaciones nativas de CDK durante el arrastre */
-.cdk-drag-preview {
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-        0 8px 10px 1px rgba(0, 0, 0, 0.14),
-        0 3px 14px 2px rgba(0, 0, 0, 0.12);
-}
+    /* Animaciones nativas de CDK durante el arrastre */
+    .cdk-drag-preview {
+        box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+            0 8px 10px 1px rgba(0, 0, 0, 0.14),
+            0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    }
 
-.cdk-drag-placeholder {
-    opacity: 0.3;
-}
+    .cdk-drag-placeholder {
+        opacity: 0.3;
+    }
 
-.cdk-drag-animating {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
+    .cdk-drag-animating {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
 
-.task-list.cdk-drop-list-receiving .task-card:not(.cdk-drag-placeholder) {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    .task-list.cdk-drop-list-receiving .task-card:not(.cdk-drag-placeholder) {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
 }
