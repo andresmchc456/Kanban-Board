@@ -1,18 +1,50 @@
-<div style="padding: 20px; font-family: sans-serif;">
-  <h1>Mi Tablero Kanban - Firebase 🚀</h1>
+<div class="kanban-container">
+  <h1>Mi Tablero Kanban - Firebase</h1>
+  <!-- Formulario para agregar tareas -->
 
-  <h3>Tareas en tiempo real:</h3>
+  <div class="add-task-form">
+    <input type="text" [(ngModel)]="newTaskTitle" placeholder="Escribe una nueva tarea..."
+      (keyup.enter)="createTask()" />
+    <button (click)="createTask()">Agregar</button>
+  </div>
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="loading">
+    Conectando con Firestore y cargando tareas...
+  </div>
 
-  <!-- El pipe async se encarga de suscribirse automáticamente -->
-  <ul *ngIf="tasks$ | async as tasks; else loading">
-    <li *ngFor="let task of tasks"
-      style="margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; list-style: none; border-radius: 4px;">
-      <strong>{{ task.title }}</strong> - <span style="color: gray;">Status: {{ task.status }}</span>
-    </li>
-    <p *ngIf="tasks.length === 0">No hay tareas en Firestore todavía. ¡Agrega una desde la consola!</p>
-  </ul>
 
-  <ng-template #loading>
-    <p>Conectando con Firestore y cargando tareas...</p>
-  </ng-template>
+  <!-- Contenedor del Tablero -->
+  <div *ngIf="!loading" class="board" cdkDropListGroup>
+    <!-- Columna: Por Hacer -->
+    <div class="column">
+      <h2>Por hacer 📌</h2>
+      <div cdkDropList [cdkDropListData]="todo" class="task-list" (cdkDropListDropped)="drop($event, 'todo')">
+        <div class="task-card" *ngFor="let task of todo" cdkDrag>
+          {{ task.title}}
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna: En Progreso -->
+    <div class="column">
+      <h2> Enprogreso ⏳</h2>
+      <div cdkDropList [cdkDropListData]="doing" class="task-list" (cdkDropListDropped)="drop($event, 'doing')">
+        <div class="task-card" *ngFor="let task of doing" cdkDrag>
+          {{ task.title }}
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Columna: Terminado -->
+    <div class="column">
+      <h2> Terminado ✅</h2>
+      <div cdkDropList [cdkDropListData]="done" class="task-list" (cdkDropListDropped)="drop($event, 'done')">
+        <div class="task-card" *ngFor="let task of done" cdkDrag>
+          {{ task.title }}
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
