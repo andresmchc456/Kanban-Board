@@ -38,4 +38,11 @@ export class KanbanService { // exporta la clase para que pueda ser utilizada en
     const taskDocRef = doc(this.firestore, `tasks/${taskId}`);
     return deleteDoc(taskDocRef);
   }
+
+  // actualizar titulo de una tarea
+  updateTaskTitle(taskId: string, newTitle: string) {
+    const taskDocRef = doc(this.firestore, `tasks/${taskId}`);
+    return updateDoc(taskDocRef, { title: newTitle });
+
+  }
 } 
