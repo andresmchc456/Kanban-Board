@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, addDoc, doc, updateDoc } from '@angular/fire/firestore'; // Importaciones de Firestore 
+import { Firestore, collection, collectionData, addDoc, doc, updateDoc, deleteDoc } from '@angular/fire/firestore'; // Importaciones de Firestore 
 import { Observable } from 'rxjs';
 
 export interface Task { // interface define la estructura de los datos
@@ -31,5 +31,11 @@ export class KanbanService { // exporta la clase para que pueda ser utilizada en
   updateTaskStatus(taskId: string, newStatus: 'todo' | 'doing' | 'done') {
     const taskDocRef = doc(this.firestore, `tasks/${taskId}`);
     return updateDoc(taskDocRef, { status: newStatus });
+  }
+
+  // Eliminar una tarea de Firestore usando su ID
+  deleteTask(taskId: string) {
+    const taskDocRef = doc(this.firestore, `tasks/${taskId}`);
+    return deleteDoc(taskDocRef);
   }
 } 
