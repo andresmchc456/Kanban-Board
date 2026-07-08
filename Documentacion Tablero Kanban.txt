@@ -1,0 +1,180 @@
+Desarrollo del Tablero Kanban
+
+Actualización del Servicio (src/app/services/kanban.ts)
+Se integraron las funciones nativas de Firebase deleteDoc y updateDoc para manipular documentos específicos mediante su ID único en la colección tasks.
+
+Lógica del Componente (src/app/app.component.ts)
+Se añadieron variables de control reactivas para gestionar los estados intermedios en la interfaz (saber qué tarea está en edición) y los métodos que resuelven las promesas asíncronas de Firebase.
+
+
+
+Interfaz Dinámica (src/app/app.component.html)
+El HTML se actualizó en sus tres columnas independientes (todo, doing, done) para alternar dinámicamente entre el modo lectura y el modo edición usando directivas estructurales *ngIf.
+
+Punto Técnico Clave 1: [cdkDragDisabled]="editingTaskId === task.id" congela el comportamiento de arrastre mientras se digita texto en el input.
+
+Punto Técnico Clave 2: $event.stopPropagation() detiene el evento burbuja en el DOM al hacer clic sobre la "X", impidiendo que Angular CDK intente arrastrar la tarjeta al querer eliminarla.
+
+
+Estilos Flexibles (src/app/app.component.scss)
+Para evitar desajustes visuales entre los dos modos, se definió una distribución flexbox uniforme en las tarjetas
+
+
+Archivo de Configuración (app.config.ts)
+Este es el estado del archivo que enlaza las claves de tu consola de Firebase e inicializa tanto la aplicación como el módulo de Firestore
+
+
+
+
+
+
+Despliegue en Firebase Hosting 🌍
+
+1. Compilar el proyecto en Angular
+Primero generamos los archivos optimizados de producción. En tu terminal ejecuta
+
+ng build
+
+
+2. Inicializar el Hosting de Firebase
+En la raíz del proyecto, ejecuta el asistente de inicialización:
+
+firebase init hosting
+
+
+La terminal te guiará con la siguiente configuración interactiva:
+
+Select a option: Elige Use an existing project y selecciona el proyecto de tu tablero.
+
+What do you want to use as your public directory? ¡Importante aquí! Escribe la ruta donde Angular guardó tu build. Usualmente es:
+dist/kanban-firebase/browser
+
+Configure as a single-page app (rewrite all urls to /index.html)? Escribe Yes (o y).
+
+Set up automatic builds and deploys with GitHub? Por ahora escribe No (o n).
+
+File dist/kanban-firebase/browser/index.html already exists. Overwrite? Escribe No para que no destruya lo que construyó Angular.
+
+3. Subir la App a Internet
+Una vez finalizado el asistente, solo te queda ejecutar el comando de despliegue:
+
+firebase deploy --only hosting
+
+
+
+
+
+
+
+
+Guía de Errores Comunes e Instalación en Angular + Firebase
+
+ 1. Error de Carpeta de Despliegue en Firebase Hosting (¡Solucionado recientemente! 🎉)
+Síntoma
+Al ejecutar firebase deploy, la web muestra la página por defecto de Firebase ("Firebase Hosting Setup Complete") en lugar de la aplicación de Angular, o el despliegue falla indicando que el directorio no existe.
+
+Causa
+El archivo 
+firebase.json
+ viene configurado por defecto con "public": "public" o "public": "dist/project-name", pero las versiones modernas de Angular compilan la aplicación en la ruta dist/kanban-firebase/browser.
+
+Solución
+Modificar 
+firebase.json
+ para que la propiedad public apunte a la carpeta exacta de compilación:
+
+json
+
+{
+  "hosting": {
+    "public": "dist/kanban-firebase/browser",
+    ...
+  }
+}
+2. Errores de Conexión a Firestore (Manejo de Errores)
+Síntoma
+La consola muestra errores como Firestore Error: FirebaseError: [code=permission-denied]... o la aplicación se queda cargando indefinidamente.
+
+Causa
+Las reglas de seguridad de Firestore en Firebase Console no permiten la lectura/escritura (por ejemplo, están en "modo de producción" estricto).
+Las credenciales de Firebase en 
+app.config.ts
+ son incorrectas o no coinciden con las del proyecto activo en Firebase.
+Solución
+Verificar credenciales: Asegurarse de que firebaseConfig en 
+app.config.ts
+ tiene la apiKey, projectId, etc., correctas.
+Reglas de Firestore: En la pestaña Rules de tu base de datos Firestore en Firebase Console, configurar reglas adecuadas. Por ejemplo, para desarrollo:
+javascript
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true; // O ajustar según autenticación
+    }
+  }
+}
+Manejo en Angular: Capturar el error en la suscripción del servicio, tal como se implementó en 
+app.ts
+:
+typescript
+
+this.kanbanServices.getTasks().subscribe({
+  error: (err) => {
+    this.errorMessage = `Error al conectar con Firestore: ${err.message}`;
+  }
+});
+3. Firebase CLI no Reconocido
+Síntoma
+Al ejecutar comandos de Firebase como firebase login o firebase deploy, la terminal arroja el error:
+
+firebase : El término 'firebase' no se reconoce como nombre de un cmdlet, función, archivo de script...
+
+Causa
+Las herramientas de Firebase (firebase-tools) no están instaladas globalmente en el sistema, o la ruta de npm no está en las variables de entorno (PATH).
+
+Solución
+Instalar de forma global:
+bash
+
+npm install -g firebase-tools
+Si persiste, reiniciar la terminal o verificar que la ruta global de npm esté en tus variables de entorno en Windows.
+4. Incompatibilidad de Versiones de Dependencias (Angular vs. @angular/fire)
+Síntoma
+Durante la instalación con npm install, la consola muestra errores de conflictos de peer dependencies (npm ERR! code ERESOLVE).
+
+Causa
+La versión instalada de @angular/fire o @angular/cdk no es compatible con la versión de Angular instalada en el proyecto.
+
+Solución
+Utilizar el instalador oficial de Angular que resuelve y sincroniza las dependencias automáticamente:
+
+bash
+
+ng add @angular/fire
+Si es necesario forzar la compatibilidad para pruebas de desarrollo local, se puede agregar la bandera --legacy-peer-deps:
+
+bash
+
+npm install --legacy-peer-deps
+5. Falta de Módulos Necesarios (por ejemplo, Drag & Drop o FormsModule)
+Síntoma
+Errores en consola de compilación o ejecución como:
+
+Can't bind to 'ngModel' since it isn't a known property of 'input' StaticInjectorError[DragDropModule]
+
+Causa
+En componentes independientes (standalone), cada módulo o directiva que se utilice en la plantilla HTML debe ser importada explícitamente en el arreglo imports del componente.
+
+Solución
+Asegurar que en 
+app.ts
+ estén importados:
+
+typescript
+
+@Component({
+  ...
+  imports: [CommonModule, FormsModule, DragDropModule]
+})
