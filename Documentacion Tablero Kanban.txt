@@ -1,3 +1,6 @@
+https://share.gemini.google/qBiIMvp6rrXL
+
+
 Desarrollo del Tablero Kanban
 
 Actualización del Servicio (src/app/services/kanban.ts)
